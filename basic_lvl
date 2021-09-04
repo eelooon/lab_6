@@ -1,0 +1,107 @@
+// labaNumber6_basic.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <sys/types.h>
+#include <fcntl.h> 
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <windows.h>
+
+#pragma warning(disable : 4996)
+using namespace std;
+
+struct Factory
+{
+    string name;
+    string middleName;
+    string surName;
+    string position;
+    int salary;
+    void ReadInfo(int &pMiddleSalary , int &pcount );
+    void Info();
+};
+
+void Factory::Info()
+{
+    cout << endl << "Фамилия: " << surName;
+    cout << endl << "Имя: " << name;
+    cout << endl << "Отчество: " << middleName;
+    cout << endl << "Должность: " << position;
+    cout << endl << "Зарплата: " << salary;
+}
+
+void Factory::ReadInfo(int &pMiddleSalary , int &pcount)
+{
+    setlocale(0, "ru");
+    cout << "Введите фамилию:";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, surName);
+    cout << "Введите имя:";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, name);
+    cout << "Введите отчество:";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, middleName);
+    cout << "Введите должность:";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, position);
+    if (position == "Слесарь" || position == "cлесарь") {
+        pMiddleSalary = salary + pMiddleSalary;
+        pcount++;
+    }
+    cout << "Введите зарплату:";
+    cin >> salary;
+}
+
+int main()
+{
+   // setlocale(0, "ru");
+    SetConsoleOutputCP(1251);
+    SetConsoleCP(1251);
+    cout << "Введите количество работников: ";
+    int countEmploee , countLocksmith = 0;
+    cin >> countEmploee;
+    Factory* employee = new Factory[countEmploee];
+    int middleSalary = 0;
+    for (size_t i = 0; i < countEmploee; i++)
+    {
+        employee[i].ReadInfo(middleSalary, countLocksmith);
+        cout << endl;
+    }
+    
+    /*cout <<endl<< middleSalary;
+
+    cout << endl << countLocksmith;*/
+    char path[] = "Employees.bin";
+
+    FILE* file_1, * file_2;
+    file_1 = fopen(path, "wb");
+    fwrite(employee, sizeof(Factory), countEmploee, file_1);
+    fclose(file_1);
+
+    cout << endl << "Считывание информации с файла:" << endl << endl;
+    Factory* employeeInfo = new Factory[countEmploee];
+    file_2 = fopen(path, "rb");
+    fread(employeeInfo, sizeof(Factory), countEmploee, file_2);
+    fclose(file_2);
+
+    for (size_t i = 0; i < countEmploee; i++)
+    {
+        employee[i].Info();
+        cout << endl;
+    }
+    if (countLocksmith != 0)
+    {
+        cout << "Средняя зарплата слесарей: " << middleSalary / countLocksmith << endl;
+        cout << "Количество слесарей: " << countLocksmith;
+    }
+
+
+
+    
+
+
+}
+
+
