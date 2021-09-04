@@ -1,0 +1,93 @@
+// labNumber6_Higerlvl.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+#include <sys/types.h>
+#include <fcntl.h> 
+#include <iostream>
+#include <string>
+#pragma warning(disable : 4996)
+using namespace std;
+
+struct Performance
+{
+    int math;
+    int dis;
+    int prog;
+};
+
+struct University
+{
+    string FIO;
+    int numberGroup;
+    string array[3] = {"Математика: " ,"Дискретка: " , "Програмирование: " };
+    Performance marks;
+    int scholarship;
+    void ReadInfo();
+    void Info();
+};
+
+void University::Info()
+{
+    string array[3] = { "Математика: " ,"Дискретка: " , "Програмирование: " };
+    cout << "ФИО: "<< FIO <<endl;
+    cout << "Номер групы: " << numberGroup << endl;
+    cout << "Успеваемость" << endl;
+    cout << array[0] <<"\t " << marks.math << endl;
+    cout << array[1] <<"\t " << marks.dis << endl;
+    cout << array[2] << marks.prog << endl;
+    cout << "Размер стипендии: "<< scholarship << endl;
+    
+}
+
+void University::ReadInfo()
+{
+    string array[3] = { "Математика: " ,"Дискретка: " , "Програмирование: " };
+    cout << "Введите инициалы студента: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    getline(cin, FIO);
+    cout << "Введите номер групы: ";
+    cin.ignore(std::cin.rdbuf()->in_avail());
+    cin >> numberGroup;
+    cout << "Введите успеваемость студента: "<<endl;
+    cout << array[0]; cin >> marks.math;
+    cout << array[1]; cin >> marks.dis;
+    cout << array[2]; cin >> marks.prog;
+    cout << "Введите размер стипендии: ";
+    cin >> scholarship;
+    if (marks.dis == 5 && marks.math == 5 && marks.prog == 5 )
+        scholarship = scholarship + scholarship / 2;
+}
+
+int main()
+{
+    setlocale(0, "ru");
+    cout << "Введите количество студентов: ";
+    int countStudent;
+    cin >> countStudent;
+    University* student = new University[countStudent];
+    for (size_t i = 0; i < countStudent; i++)
+    {
+        student[i].ReadInfo();
+        cout << endl;
+    }
+
+    char path[] = "University.bin";
+
+    FILE* file_1, * file_2;
+    file_1 = fopen(path, "wb");
+    fwrite(student, sizeof(University), countStudent, file_1);
+    fclose(file_1);
+
+    cout << endl << "Считывание информации с файла:" << endl << endl;
+    University* studentInfo = new University[countStudent];
+    file_2 = fopen(path, "rb");
+    fread(studentInfo, sizeof(University), countStudent, file_2);
+    fclose(file_2);
+
+    for (size_t i = 0; i < countStudent; i++)
+    {
+        studentInfo[i].Info();
+        cout << endl;
+    }
+
+}
+
